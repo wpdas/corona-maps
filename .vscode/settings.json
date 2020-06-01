@@ -1,0 +1,4 @@
+{
+  "eslint.workingDirectories": ["./packages/server", "./packages/webapp"],
+  "deno.enable": false
+}

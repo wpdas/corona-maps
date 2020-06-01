@@ -1,0 +1,4 @@
+  
+node_modules
+graphql-types/*
+*.d.ts

@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  # Server container
+  server:
+    build:
+      context: ./server
+    expose:
+      - $SERVER_PORT
+    environment:
+      APP_SERVER_PORT: $SERVER_PORT
+    ports:
+      - $SERVER_PORT:$SERVER_PORT
+    volumes:
+      - ./server:/app/
+      - /app/node_modules
+    networks:
+      - main-network
+
+  webapp:
+    build:
+      context: ./webapp
+    ports:
+      - $WEB_PORT:$REACT_APP_PORT
+    volumes:
+      - ./webapp/:/app/
+      - /app/node_modules
+    environment:
+      NODE_ENV: development
+      API_URL: $API_URL
+    networks:
+      - main-network
+
+networks:
+  main-network:
+    name: main-network
