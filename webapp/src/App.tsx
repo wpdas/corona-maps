@@ -2,8 +2,11 @@ import React from 'react';
 // import ApolloClient from 'apollo-boost';
 // import { ApolloProvider } from '@apollo/react-hooks';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-
+import Fonts from './fonts';
 import MainPage from './pages/MainPage';
+import HeaderBar from './components/HeaderBar';
+
+Fonts.loadFonts();
 
 // TODO: Use env API instead of hard coded
 // const client = new ApolloClient({
@@ -13,12 +16,13 @@ import MainPage from './pages/MainPage';
 function App() {
   return (
     // <ApolloProvider client={client}>
-    <Router>
-      <>
+    <>
+      <HeaderBar />
+      <Router>
         <Route exact path="/" component={MainPage} />
-      </>
-    </Router>
-    // </ApolloProvider>
+      </Router>
+    </>
+    // </ApolloProvider> */
   );
 }
 
