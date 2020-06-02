@@ -1,11 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import CustomThemeProvider from './theme';
+import Preloader from './pages/Preloader';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <CustomThemeProvider>
+      <Preloader />
+    </CustomThemeProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );

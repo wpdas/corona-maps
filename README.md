@@ -4,7 +4,7 @@ The plan is to create a Web App initially that shows every place where COVID-19 
 
 We have to use the manifest to put some information and turn possible people downloading this app as a Progressive Web App.
 
-Main stack: React, TypeScript, NodeJS, Express, GraphQL, Apollo, MongoDB, Docker
+Main stack: React, TypeScript, NodeJS, Express, GraphQL, Apollo, MongoDB, Docker, i18n
 
 ## Well to know
 
