@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import i18next from 'i18next';
 
-import { Labels } from './labels';
+import Labels from './labels';
 import en from './en.json';
 import pt from './pt.json';
 
@@ -30,8 +30,17 @@ i18next.init({
 /**
  * useI18n - Custom Hook for internationalization
  */
-export const useI18n = () => {
-  const [language, setLanguage] = useState<Language>(initialLanguage);
+const useI18n = () => {
+  const [currentLanguage, setCurrentLanguage] = useState<Language>(
+    initialLanguage,
+  );
+
+  const setLanguage = useCallback((language: Language) => {
+    i18next.changeLanguage(language, () => {
+      localStorage.setItem('language', language);
+      setCurrentLanguage(language);
+    });
+  }, []);
 
   return {
     /**
@@ -45,7 +54,7 @@ export const useI18n = () => {
     /**
      * Current language
      */
-    language,
+    language: currentLanguage,
     /**
      * Available languages
      */
@@ -53,11 +62,8 @@ export const useI18n = () => {
     /**
      * Set language
      */
-    setLanguage: (language: Language) => {
-      i18next.changeLanguage(language, () => {
-        localStorage.setItem('language', language);
-        setLanguage(language);
-      });
-    },
+    setLanguage,
   };
 };
+
+export default useI18n;

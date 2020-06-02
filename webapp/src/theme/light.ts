@@ -1,4 +1,4 @@
-import { Theme } from '.';
+import Theme from './Theme';
 
 const light: Theme = {
   color1: '#114b5f',

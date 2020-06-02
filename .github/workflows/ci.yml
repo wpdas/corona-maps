@@ -1,0 +1,35 @@
+# Workflow for CI.
+
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.16.0
+
+      # - name: Install Server Dependencies
+      #   run: cd server && yarn
+
+      - name: Install Client Dependencies
+        run: cd webapp && yarn
+
+      - name: Tests
+        run: cd webapp && yarn test
+
+      - name: Linting
+        run: cd webapp && yarn lint
+        # run: cd server && yarn lint && cd .. && cd web && yarn lint

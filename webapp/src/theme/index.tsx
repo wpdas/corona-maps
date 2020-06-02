@@ -1,18 +1,8 @@
 import React from 'react';
 import { ThemeProvider, ThemedStyledProps } from 'styled-components';
 
+import Theme from './Theme';
 import light from './light';
-
-export type Theme = {
-  readonly color1: string;
-  readonly color2: string;
-  readonly color3: string;
-  readonly color4: string;
-  readonly color5: string;
-  readonly regularFont: string;
-  readonly lightFont: string;
-  readonly boldFont: string;
-};
 
 /** List of themes */
 export const themes = {
