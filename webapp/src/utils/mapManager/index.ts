@@ -24,6 +24,8 @@ import GeometryType from 'ol/geom/GeometryType';
 
 import covidIcon from './covid-icon.png';
 
+const LAST_USER_POSITION_KEY = 'map:last-position';
+
 const attribution = new Attribution({
   collapsible: false,
 });
@@ -220,13 +222,13 @@ export const initMap = (
 };
 
 export const updateMapPosition = (
-  latitue: number,
+  latitude: number,
   longitude: number,
-  zoom: number = 18,
+  zoom: number = 17,
 ) => {
   if (initialized) {
     const view = map.getView();
-    const lonLat = fromLonLat([longitude - 0.0038, latitue + 0.0007]); // Some position fix
+    const lonLat = fromLonLat([longitude - 0.0038, latitude + 0.0007]); // Some position fix
 
     // Accuracy
     accuracyFeature.setGeometry(new Point(lonLat));
@@ -240,6 +242,12 @@ export const updateMapPosition = (
       zoom,
       duration: 2000,
     });
+
+    // Store position
+    localStorage.setItem(
+      LAST_USER_POSITION_KEY,
+      JSON.stringify({ latitude, longitude } as MapPosition),
+    );
   }
 };
 
@@ -330,4 +338,15 @@ export const addCovidMarkers = (markerDataList: Array<MarkerData>) => {
 
   previousClusters = clusters;
   map.addLayer(clusters);
+};
+
+/**
+ * Get last user position registered
+ */
+export const getLastUserPosition = () => {
+  const lastPositionData = localStorage.getItem(LAST_USER_POSITION_KEY);
+  if (lastPositionData != null) {
+    return JSON.parse(lastPositionData) as MapPosition;
+  }
+  return null;
 };

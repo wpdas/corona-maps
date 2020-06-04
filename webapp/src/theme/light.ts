@@ -8,6 +8,7 @@ const light: Theme = {
   color5: '#f45b69',
   color6: '#ffffff',
   color7: '#e6e6e6',
+  color8: '#02809090',
   lightFont:
     "RobotoLight, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
   regularFont:

@@ -1,7 +1,12 @@
 {
   "en": {
     "translation": {
-      "loading": { "label": "LOADING" }
+      "loading": { "label": "LOADING" },
+      "location-button": { "label": "Location" },
+      "new-contaminated-point-button": {
+        "label": "Add new contaminated point"
+      },
+      "my-location-button": { "label": "My location" }
     }
   }
 }

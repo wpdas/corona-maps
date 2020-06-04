@@ -3,7 +3,6 @@ import React from 'react';
 // import { ApolloProvider } from '@apollo/react-hooks';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import MainPage from './pages/MainPage';
-import HeaderBar from './components/HeaderBar';
 
 import './fonts';
 
@@ -16,7 +15,6 @@ function App() {
   return (
     // <ApolloProvider client={client}>
     <>
-      <HeaderBar />
       <Router>
         <Route exact path="/" component={MainPage} />
       </Router>

@@ -6,6 +6,7 @@ type Theme = {
   readonly color5: string;
   readonly color6: string;
   readonly color7: string;
+  readonly color8: string;
   readonly regularFont: string;
   readonly lightFont: string;
   readonly boldFont: string;
