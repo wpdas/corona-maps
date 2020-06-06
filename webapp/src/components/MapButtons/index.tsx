@@ -1,11 +1,16 @@
 import React, { useContext } from 'react';
 import ReactTooltip from 'react-tooltip';
-import { MdLocationOn, MdMyLocation, MdAddLocation } from 'react-icons/md';
+import {
+  MdLocationOn,
+  MdMyLocation,
+  MdAddLocation,
+  MdCancel,
+} from 'react-icons/md';
 import { ThemeContext } from 'styled-components';
 
 import useI18n from '../../hooks/i18n';
 import { ThemeContextValue } from '../../theme';
-import { ButtonWrapper } from './styles';
+import { ButtonWrapper, ButtonWrapperRed } from './styles';
 
 interface CommonProps {
   onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
@@ -76,6 +81,33 @@ export const MyLocationButton: React.FC<CommonProps> = ({
         place="right"
         type="dark">
         <span>{text(labels.myLocationButton)}</span>
+      </ReactTooltip>
+    </>
+  );
+};
+
+export const CancelActionButton: React.FC<CommonProps> = ({
+  onClick,
+}: CommonProps) => {
+  const {
+    current: { color5 },
+  } = useContext<ThemeContextValue>(ThemeContext);
+  const { text, labels } = useI18n();
+
+  return (
+    <>
+      <ButtonWrapperRed
+        onClick={onClick}
+        data-tip
+        data-for="cancelActionButton">
+        <MdCancel color={color5} />
+      </ButtonWrapperRed>
+      <ReactTooltip
+        id="cancelActionButton"
+        effect="solid"
+        place="right"
+        type="dark">
+        <span>{text(labels.cancelActionButton)}</span>
       </ReactTooltip>
     </>
   );

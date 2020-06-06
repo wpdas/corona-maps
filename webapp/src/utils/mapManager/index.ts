@@ -149,6 +149,13 @@ export const enableCovidMarkerInsertion = (
     }
   });
 };
+
+/**
+ * Disable covid marker
+ */
+export const disableCovidMarkerInsertion = () => {
+  covidMarkerInsertionEnabled = false;
+};
 // enableCovidMarkerInsertion - FINAL
 
 // Callback after init map

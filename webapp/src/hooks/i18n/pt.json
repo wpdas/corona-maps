@@ -6,7 +6,8 @@
       "new-contaminated-point-button": {
         "label": "Adicionar novo ponto contaminado"
       },
-      "my-location-button": { "label": "Minha localização" }
+      "my-location-button": { "label": "Minha localização" },
+      "cancel-action-button": { "label": "Cancelar ação" }
     }
   }
 }

@@ -1,16 +1,12 @@
-import React, { useEffect, useState } from 'react';
-
-import {
-  Container,
-  LeftContent,
-  ViewContainer,
-  CustomMapButtons,
-} from './styles';
+import React, { useEffect, useState, useContext } from 'react';
 
 import cursorStyle from './cursorStyle';
-
-import HeaderBar from '../HeaderBar';
-import { AddLocationButton, MyLocationButton } from '../MapButtons';
+import ModalContext from '../../contexts/Modal';
+import {
+  AddLocationButton,
+  MyLocationButton,
+  CancelActionButton,
+} from '../MapButtons';
 
 // Map Manager
 import {
@@ -21,14 +17,19 @@ import {
   addCovidMarkers,
   // enableDrawCovidMarker,
   enableCovidMarkerInsertion,
+  disableCovidMarkerInsertion,
   MarkerData,
   MapPosition,
 } from '../../utils/mapManager';
+
+import { Container, ViewContainer, CustomMapButtons } from './styles';
 import '../../utils/mapManager/map.css';
 
 const MapContainer: React.FC = () => {
   const [currentLocation, setCurrentLocation] = useState<Position | null>(null);
   const [additionalViewStyle, setAdditionalViewStyle] = useState({});
+  const [covidMarkerActivated, setCovidMarkerActivated] = useState(false);
+  const { showConfirmationModal } = useContext(ModalContext);
 
   // Simulated: Add markers from server.
   useEffect(() => {
@@ -49,7 +50,10 @@ const MapContainer: React.FC = () => {
     const lastUserPosition = getLastUserPosition();
     const initialPosition: MapPosition = lastUserPosition
       ? lastUserPosition
-      : { latitude: -19.8157, longitude: -43.9542 }; // Belo Horizonte
+      : {
+          latitude: -19.8157,
+          longitude: -43.9542,
+        }; // Belo Horizonte
 
     initMap('mapView', initialPosition.latitude, initialPosition.longitude);
     if (navigator.geolocation) {
@@ -89,25 +93,50 @@ const MapContainer: React.FC = () => {
     }
   };
 
-  // TODO add cancel action button (para cancelar acao de criar ponteiro)
   const handlerClickAddCovidLocation = () => {
     // Enable draw marker
     setAdditionalViewStyle(cursorStyle);
+    setCovidMarkerActivated(true);
     enableCovidMarkerInsertion((markerPosition) => {
       setAdditionalViewStyle({});
-      console.log(markerPosition); // To store on DB
+      setCovidMarkerActivated(false);
+
+      // TODO: finish confirmation modal rule
+      // TODO: use i18n to fill attributes
+      showConfirmationModal({
+        title: 'Criar Marcação',
+        description:
+          'Deseja realmente criar uma marcação de COVID-19 neste local?',
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não',
+        onClickConfirm: () => {
+          console.log(markerPosition); // TODO To store on DB
+        },
+      });
     });
   };
 
+  const handlerCancelAction = () => {
+    disableCovidMarkerInsertion();
+    setAdditionalViewStyle({});
+    setCovidMarkerActivated(false);
+  };
+
+  // TODO add cancel action button (para cancelar acao de criar ponteiro)
+  // TODO pesquisar endereço (campo e funcao que deve ser investigado no site da API do mapa)
+
   return (
     <Container>
-      <LeftContent>
-        <HeaderBar />
-      </LeftContent>
       <ViewContainer id="mapView" style={{ ...additionalViewStyle }}>
         <CustomMapButtons>
-          <MyLocationButton onClick={handlerClickMyLocation} />
-          <AddLocationButton onClick={handlerClickAddCovidLocation} />
+          {covidMarkerActivated ? (
+            <CancelActionButton onClick={handlerCancelAction} />
+          ) : (
+            <>
+              <MyLocationButton onClick={handlerClickMyLocation} />
+              <AddLocationButton onClick={handlerClickAddCovidLocation} />
+            </>
+          )}
         </CustomMapButtons>
       </ViewContainer>
     </Container>

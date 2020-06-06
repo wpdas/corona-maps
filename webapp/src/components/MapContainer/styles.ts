@@ -3,14 +3,15 @@ import { ThemeProps } from '../../theme';
 
 export const Container = styled.div`
   display: flex;
-  width: 100vw;
+  flex-grow: 1;
   height: 100vh;
 `;
 
 export const ViewContainer = styled.div`
   z-index: 1;
-  width: 100vw;
+  width: 100%;
   height: 100%;
+  background: ${(props: ThemeProps) => props.theme.current.color6};
 `;
 
 export const CustomMapButtons = styled.div`
@@ -23,12 +24,4 @@ export const CustomMapButtons = styled.div`
   background-color: rgba(255, 255, 255, 0.4);
   border-radius: 4px;
   padding: 3px;
-`;
-
-export const LeftContent = styled.div`
-  display: flex;
-  width: 408px;
-  height: 100%;
-  background: ${(props: ThemeProps) => props.theme.current.color6};
-  border-right: 2px solid ${(props: ThemeProps) => props.theme.current.color7};
 `;
