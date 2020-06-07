@@ -1,7 +1,25 @@
 {
   "en": {
     "translation": {
-      "loading": { "label": "LOADING" }
+      "loading": { "label": "LOADING" },
+      "location-button": { "label": "Location" },
+      "new-contaminated-point-button": {
+        "label": "Add new contaminated point"
+      },
+      "my-location-button": { "label": "My location" },
+      "cancel-action-button": { "label": "Cancel action" },
+      "modal-new-marker": {
+        "label": "New Marker"
+      },
+      "modal-confirmation-description": {
+        "label": "Do you really want to create a new COVID-19 marker at this place?"
+      },
+      "yes": {
+        "label": "Yes"
+      },
+      "no": {
+        "label": "No"
+      }
     }
   }
 }

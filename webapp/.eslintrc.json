@@ -5,6 +5,8 @@
     "@typescript-eslint/ban-ts-ignore": "error",
     "@typescript-eslint/ban-types": "error",
     "camelcase": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/camelcase": "error",
     "@typescript-eslint/class-name-casing": "error",
     "@typescript-eslint/consistent-type-assertions": "error",

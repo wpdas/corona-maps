@@ -1,10 +1,16 @@
 import React from 'react';
-import { Container } from './styles';
+import { Container, LeftContent } from './styles';
+
+import HeaderBar from '../../components/HeaderBar';
+import MapContainer from '../../components/MapContainer';
 
 const MainPage: React.FC = () => {
   return (
     <Container>
-      <p>Main Page</p>
+      <LeftContent>
+        <HeaderBar />
+      </LeftContent>
+      <MapContainer />
     </Container>
   );
 };

@@ -5,6 +5,8 @@ import Labels from './labels';
 import en from './en.json';
 import pt from './pt.json';
 
+const LANGUAGE_KEY = 'i18n:language';
+
 type Language = 'en' | 'pt';
 
 const availableLanguages = {
@@ -17,7 +19,10 @@ const navigatorLanguage = window.navigator.language.includes('pt')
   : availableLanguages.EN;
 
 const initialLanguage: Language =
-  (localStorage.getItem('language') as Language) || navigatorLanguage;
+  (localStorage.getItem(LANGUAGE_KEY) as Language) || navigatorLanguage;
+
+// Save language
+localStorage.setItem(LANGUAGE_KEY, initialLanguage);
 
 i18next.init({
   lng: initialLanguage,
@@ -37,7 +42,7 @@ const useI18n = () => {
 
   const setLanguage = useCallback((language: Language) => {
     i18next.changeLanguage(language, () => {
-      localStorage.setItem('language', language);
+      localStorage.setItem(LANGUAGE_KEY, language);
       setCurrentLanguage(language);
     });
   }, []);
