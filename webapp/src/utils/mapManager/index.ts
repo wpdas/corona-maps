@@ -4,9 +4,9 @@ import { XYZ, Cluster, Vector as VectorSource } from 'ol/source';
 import { defaults as defaultControls, Attribution } from 'ol/control';
 import { fromLonLat } from 'ol/proj';
 
-import Feature from 'ol/Feature.js';
-import Geolocation from 'ol/Geolocation.js';
-import Point from 'ol/geom/Point.js';
+import Feature from 'ol/Feature';
+import Geolocation from 'ol/Geolocation';
+import Point from 'ol/geom/Point';
 import {
   Circle as CircleStyle,
   Fill,
@@ -14,12 +14,12 @@ import {
   Style,
   Icon,
   Text,
-} from 'ol/style.js';
+} from 'ol/style';
 import IconAnchorUnits from 'ol/style/IconAnchorUnits';
 
-import { defaults as defaultInteractions, DragZoom } from 'ol/interaction.js';
+import { defaults as defaultInteractions, DragZoom } from 'ol/interaction';
 
-import Draw from 'ol/interaction/Draw.js';
+import Draw from 'ol/interaction/Draw';
 import GeometryType from 'ol/geom/GeometryType';
 
 import covidIcon from './covid-icon.png';
@@ -57,12 +57,12 @@ positionFeature.setStyle(
 const accuracyFeature = new Feature();
 
 // Draw (add a point on the map) - INIT
-var source = new VectorSource({ wrapX: false });
+const source = new VectorSource({ wrapX: false });
 
 // Corona Points Layer
-var vector = new VectorLayer({
+const vector = new VectorLayer({
   zIndex: 2,
-  source: source,
+  source,
   style: new Style({
     fill: new Fill({
       color: 'rgba(255, 255, 255, 0.2)',
@@ -87,7 +87,10 @@ export type MapPosition = {
   latitude: number;
 };
 
-type EnableDrawCovidMarkerCallback = (markerPosition: MapPosition) => void;
+type EnableDrawCovidMarkerCallback = (
+  markerPosition: MapPosition,
+  cancelAction?: () => void,
+) => void;
 let drawConvidMarkerEnabled = false;
 /**
  * Enable the Draw Marker function. It will audio desable after click over the map
@@ -97,7 +100,7 @@ export const enableDrawCovidMarker = (
   onDrawMarker: EnableDrawCovidMarkerCallback,
 ) => {
   const draw = new Draw({
-    source: source,
+    source,
     type: GeometryType.POINT,
   });
 
@@ -119,53 +122,15 @@ export const enableDrawCovidMarker = (
 };
 // Draw (add a point on the map) - FINAL
 
-// enableCovidMarkerInsertion - INIT
-let covidMarkerInsertionEnabled = false;
-
-/**
- * Register new Covid Marker. Better performance than drawCovidMarker. It'll be desabled automatically after click
- * @param onDrawMarker Callback method containing the position from the created marker
- */
-export const enableCovidMarkerInsertion = (
-  onDrawMarker: EnableDrawCovidMarkerCallback,
-) => {
-  covidMarkerInsertionEnabled = true;
-  map.on('click', (event) => {
-    if (covidMarkerInsertionEnabled) {
-      const [longitude, latitude] = event.coordinate;
-      const markerPosition: MapPosition = {
-        longitude,
-        latitude,
-      };
-      onDrawMarker(markerPosition);
-      covidMarkerInsertionEnabled = false;
-
-      const newMarkerData: MarkerData = { position: markerPosition };
-      const newMarkerDataList: MarkerData[] = [
-        ...markerDataListCopy,
-        newMarkerData,
-      ];
-      addCovidMarkers(newMarkerDataList);
-    }
-  });
-};
-
-/**
- * Disable covid marker
- */
-export const disableCovidMarkerInsertion = () => {
-  covidMarkerInsertionEnabled = false;
-};
-// enableCovidMarkerInsertion - FINAL
-
 // Callback after init map
 let onInitMapCallback = () => {};
 /**
  * On init map
  * @param callback
  */
-export const onInitMap = (callback: () => void) =>
-  (onInitMapCallback = callback);
+export const onInitMap = (callback: () => void) => {
+  onInitMapCallback = callback;
+};
 
 /**
  * Init Map
@@ -173,8 +138,8 @@ export const onInitMap = (callback: () => void) =>
  */
 export const initMap = (
   mapTargetElementId: string,
-  latitude: number = 0,
-  longitude: number = 0,
+  latitude = 0,
+  longitude = 0,
 ) => {
   initialized = true;
 
@@ -190,7 +155,7 @@ export const initMap = (
     projection: view.getProjection(),
   });
 
-  geolocation.on('change:accuracyGeometry', function () {
+  geolocation.on('change:accuracyGeometry', () => {
     accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
   });
 
@@ -204,19 +169,19 @@ export const initMap = (
     }),
   });
 
+  const userPositionLayer = new VectorLayer({
+    zIndex: 4,
+    source: new VectorSource({
+      features: [accuracyFeature, positionFeature],
+    }),
+  });
+
   map = new Map({
     controls: defaultControls({ attribution: false }).extend([attribution]),
     interactions: defaultInteractions().extend([new DragZoom()]),
     target: mapTargetElementId,
-    layers: [layer, vector],
+    layers: [layer, vector, userPositionLayer],
     view,
-  });
-
-  new VectorLayer({
-    map,
-    source: new VectorSource({
-      features: [accuracyFeature, positionFeature],
-    }),
   });
 
   // Initial animation
@@ -231,10 +196,10 @@ export const initMap = (
 export const updateMapPosition = (
   latitude: number,
   longitude: number,
-  zoom: number = 17,
+  zoom = 17,
 ) => {
   if (initialized) {
-    const view = map.getView();
+    const currentView = map.getView();
     const lonLat = fromLonLat([longitude - 0.0038, latitude + 0.0007]); // Some position fix
 
     // Accuracy
@@ -244,7 +209,7 @@ export const updateMapPosition = (
     positionFeature.setGeometry(new Point(lonLat));
 
     // Go to desired position on map (will not work if user interact with map)
-    view.animate({
+    currentView.animate({
       center: lonLat,
       zoom,
       duration: 2000,
@@ -265,7 +230,7 @@ export type MarkerData = {
   position: MapPosition;
 };
 
-let markerDataListCopy: Array<MarkerData>;
+let markerDataListCopy: Array<MarkerData> = [];
 
 /**
  * Add Covid Markers to the Map.
@@ -287,7 +252,7 @@ export const addCovidMarkers = (markerDataList: Array<MarkerData>) => {
   });
 
   const markers = new VectorSource({
-    features: features,
+    features,
   });
 
   const clusterSource = new Cluster({
@@ -299,7 +264,7 @@ export const addCovidMarkers = (markerDataList: Array<MarkerData>) => {
   const clusters = new VectorLayer({
     zIndex: 3,
     source: clusterSource,
-    style: function (feature) {
+    style(feature) {
       const size = feature.get('features').length;
       let style = null;
       if (!style) {
@@ -346,6 +311,51 @@ export const addCovidMarkers = (markerDataList: Array<MarkerData>) => {
   previousClusters = clusters;
   map.addLayer(clusters);
 };
+
+// enableCovidMarkerInsertion - INIT
+let covidMarkerInsertionEnabled = false;
+
+/**
+ * Register new Covid Marker. Better performance than drawCovidMarker. It'll be desabled automatically after click
+ * @param onDrawMarker Callback method containing the position from the created marker
+ */
+export const enableCovidMarkerInsertion = (
+  onDrawMarker: EnableDrawCovidMarkerCallback,
+) => {
+  covidMarkerInsertionEnabled = true;
+  map.on('click', (event) => {
+    if (covidMarkerInsertionEnabled) {
+      const [longitude, latitude] = event.coordinate;
+      const markerPosition: MapPosition = {
+        longitude,
+        latitude,
+      };
+
+      const newMarkerData: MarkerData = { position: markerPosition };
+      const newMarkerDataList: MarkerData[] = [
+        ...markerDataListCopy,
+        newMarkerData,
+      ];
+
+      addCovidMarkers(newMarkerDataList);
+
+      const cancelAction = () => {
+        newMarkerDataList.pop();
+        addCovidMarkers(newMarkerDataList);
+      };
+      onDrawMarker(markerPosition, cancelAction);
+      covidMarkerInsertionEnabled = false;
+    }
+  });
+};
+
+/**
+ * Disable covid marker
+ */
+export const disableCovidMarkerInsertion = () => {
+  covidMarkerInsertionEnabled = false;
+};
+// enableCovidMarkerInsertion - FINAL
 
 /**
  * Get last user position registered

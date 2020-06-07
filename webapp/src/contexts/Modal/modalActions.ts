@@ -1,22 +1,22 @@
-import { ModalState } from './modalReducer';
+import {
+  HideModalAction,
+  ShowConfirmationModalProps,
+  ShowConfirmationModalAction,
+  SHOW_CONFIRMATION_MODAL_ACTION,
+  HIDE_MODAL_ACTION,
+} from './modalTypes';
 
-export const SHOW_CONFIRMATION_MODAL_ACTION =
-  'modal:SHOW_CONFIRMATION_MODAL_ACTION';
-
-interface ShowConfirmationModalAction {
-  type: typeof SHOW_CONFIRMATION_MODAL_ACTION;
-  payload: ModalState;
-}
-
-export type ModalReducerActionTypes = ShowConfirmationModalAction;
-
-export interface ShowConfirmationModalProps {
-  readonly title?: string;
-  readonly description?: string;
-  readonly confirmButtonText?: string;
-  readonly cancelButtonText?: string;
-  readonly onClickConfirm?: () => void;
-}
+/**
+ * Hide modal
+ */
+export const hideModal = (): HideModalAction => {
+  return {
+    type: HIDE_MODAL_ACTION,
+    payload: {
+      show: false,
+    },
+  };
+};
 
 /**
  * Show confirmation modal
@@ -27,17 +27,19 @@ export const showConfirmationModal = ({
   confirmButtonText = 'Yes',
   cancelButtonText = 'No',
   onClickConfirm = () => {},
+  onClickCancel = () => {},
 }: ShowConfirmationModalProps): ShowConfirmationModalAction => {
   return {
     type: SHOW_CONFIRMATION_MODAL_ACTION,
     payload: {
       show: true,
+      showCancelButton: true,
       title,
       description,
       confirmButtonText,
       cancelButtonText,
-      showCancelButton: true,
       onClickConfirm,
+      onClickCancel,
     },
   };
 };

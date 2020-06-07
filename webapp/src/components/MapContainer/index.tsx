@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 
 import cursorStyle from './cursorStyle';
 import ModalContext from '../../contexts/Modal';
+import useI18n from '../../hooks/i18n';
 import {
   AddLocationButton,
   MyLocationButton,
@@ -15,7 +16,6 @@ import {
   getLastUserPosition,
   updateMapPosition,
   addCovidMarkers,
-  // enableDrawCovidMarker,
   enableCovidMarkerInsertion,
   disableCovidMarkerInsertion,
   MarkerData,
@@ -30,6 +30,7 @@ const MapContainer: React.FC = () => {
   const [additionalViewStyle, setAdditionalViewStyle] = useState({});
   const [covidMarkerActivated, setCovidMarkerActivated] = useState(false);
   const { showConfirmationModal } = useContext(ModalContext);
+  const { text, labels } = useI18n();
 
   // Simulated: Add markers from server.
   useEffect(() => {
@@ -48,22 +49,13 @@ const MapContainer: React.FC = () => {
   useEffect(() => {
     let watchId: number;
     const lastUserPosition = getLastUserPosition();
-    const initialPosition: MapPosition = lastUserPosition
-      ? lastUserPosition
-      : {
-          latitude: -19.8157,
-          longitude: -43.9542,
-        }; // Belo Horizonte
+    const initialPosition: MapPosition = lastUserPosition || {
+      latitude: -19.8157,
+      longitude: -43.9542,
+    }; // Belo Horizonte
 
     initMap('mapView', initialPosition.latitude, initialPosition.longitude);
     if (navigator.geolocation) {
-      // Fetch current location
-      // navigator.geolocation.getCurrentPosition((position) => {
-      //   const { latitude, longitude } = position.coords;
-      //   // initMap('mapView', latitude, longitude);
-      //   updateMapPosition(latitude, longitude);
-      // });
-
       // Watch location updates
       watchId = navigator.geolocation.watchPosition((position) => {
         setCurrentLocation(position);
@@ -97,21 +89,20 @@ const MapContainer: React.FC = () => {
     // Enable draw marker
     setAdditionalViewStyle(cursorStyle);
     setCovidMarkerActivated(true);
-    enableCovidMarkerInsertion((markerPosition) => {
+    enableCovidMarkerInsertion((markerPosition, cancelAction) => {
       setAdditionalViewStyle({});
       setCovidMarkerActivated(false);
 
-      // TODO: finish confirmation modal rule
-      // TODO: use i18n to fill attributes
       showConfirmationModal({
-        title: 'Criar Marcação',
-        description:
-          'Deseja realmente criar uma marcação de COVID-19 neste local?',
-        confirmButtonText: 'Sim',
-        cancelButtonText: 'Não',
+        title: text(labels.modalNewMarker),
+        description: text(labels.modalConfirmationDescription),
+        confirmButtonText: text(labels.yes),
+        cancelButtonText: text(labels.no),
         onClickConfirm: () => {
-          console.log(markerPosition); // TODO To store on DB
+          // eslint-disable-next-line no-console
+          console.log(markerPosition); // TODO Store this marker position on DB
         },
+        onClickCancel: cancelAction,
       });
     });
   };
@@ -122,7 +113,6 @@ const MapContainer: React.FC = () => {
     setCovidMarkerActivated(false);
   };
 
-  // TODO add cancel action button (para cancelar acao de criar ponteiro)
   // TODO pesquisar endereço (campo e funcao que deve ser investigado no site da API do mapa)
 
   return (

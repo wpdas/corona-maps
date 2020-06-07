@@ -7,7 +7,19 @@
         "label": "Adicionar novo ponto contaminado"
       },
       "my-location-button": { "label": "Minha localização" },
-      "cancel-action-button": { "label": "Cancelar ação" }
+      "cancel-action-button": { "label": "Cancelar ação" },
+      "modal-new-marker": {
+        "label": "Nova Marcação"
+      },
+      "modal-confirmation-description": {
+        "label": "Deseja realmente criar uma marcação de COVID-19 neste local?"
+      },
+      "yes": {
+        "label": "Sim"
+      },
+      "no": {
+        "label": "Não"
+      }
     }
   }
 }

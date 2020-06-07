@@ -1,23 +1,11 @@
 import {
-  ModalReducerActionTypes,
-  ShowConfirmationModalProps,
+  ModalState,
+  ModalReducer,
+  HIDE_MODAL_ACTION,
+  HideModalPayload,
   SHOW_CONFIRMATION_MODAL_ACTION,
-} from './modalActions';
-
-export interface ModalState {
-  readonly show: Boolean;
-  readonly title?: string;
-  readonly description?: string;
-  readonly confirmButtonText?: string;
-  readonly cancelButtonText?: string;
-  readonly showCancelButton?: Boolean;
-  readonly onClickConfirm?: () => void;
-}
-
-type ModalReducer = (
-  state: ModalState,
-  action: ModalReducerActionTypes,
-) => ModalState;
+  ShowConfirmationModalPayload,
+} from './modalTypes';
 
 export const initialState: ModalState = {
   show: false,
@@ -29,32 +17,50 @@ export const initialState: ModalState = {
   onClickConfirm: () => {},
 };
 
-const shoConfirmationwModalCase = (
+const hideModalCase = (
   state: ModalState,
-  payload: ShowConfirmationModalProps,
-) => {
-  const {
-    title,
-    description,
-    confirmButtonText,
-    cancelButtonText,
-    onClickConfirm,
-  } = payload;
-  console.log('Ma oew:', payload);
+  payload: HideModalPayload,
+): ModalState => {
+  const { show } = payload;
   return {
     ...state,
+    show,
+  };
+};
+
+const showConfirmationwModalCase = (
+  state: ModalState,
+  payload: ShowConfirmationModalPayload,
+): ModalState => {
+  const {
+    show,
     title,
     description,
     confirmButtonText,
     cancelButtonText,
+    showCancelButton,
     onClickConfirm,
+    onClickCancel,
+  } = payload;
+  return {
+    ...state,
+    show,
+    title,
+    description,
+    confirmButtonText,
+    cancelButtonText,
+    showCancelButton,
+    onClickConfirm,
+    onClickCancel,
   };
 };
 
 const modalReducer: ModalReducer = (state = initialState, action) => {
   switch (action.type) {
+    case HIDE_MODAL_ACTION:
+      return hideModalCase(state, action.payload);
     case SHOW_CONFIRMATION_MODAL_ACTION:
-      return shoConfirmationwModalCase(state, action.payload);
+      return showConfirmationwModalCase(state, action.payload);
     default:
       return state;
   }
